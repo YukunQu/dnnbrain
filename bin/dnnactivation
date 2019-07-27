@@ -8,7 +8,7 @@ Reviewer:
 
 import argparse
 from torchvision import transforms
-from torch.util.data import DataLoader
+from torch.utils.data import DataLoader
 from dnnbrain.core import model_operation
 from dnnbrain.utils import iofiles
 
@@ -51,23 +51,23 @@ def main():
                         help='output directory')
     args = parser.parse_args()
 
-	# See below is the framework of this command 
-	# ------------------------------------
-	# Streamline
-	# ------------------------------------
-	# 1 Call activation extraction from 'core' to get CNN's activations. Parameters: -net, -in, -layer, -channel
-	# 2 Save activation data and picutre list to csv files. Parameters: -activation,-net, -out, -layer, -channel, -dnnpicname
+    # See below is the framework of this command
+    # ------------------------------------
+    # Streamline
+    # ------------------------------------
+    # 1 Call activation extraction from 'core' to get CNN's activations. Parameters: -net, -in, -layer, -channel
+    # 2 Save activation data and picutre list to csv files. Parameters: -activation,-net, -out, -layer, -channel, -dnnpicname
 	
 	
 	# DNN activation extraction 
     netloader = iofiles.NetLoader(args.net)
     imgcropsize = netloader.img_size
     transform = transforms.Compose([transforms.Resize(imgcropsize),
-                                    transforms.ToTensor()])                            
+                                    transforms.ToTensor()])
     picdataset = iofiles.PicDataset(args.stim, transform=transform)
     picdataloader = DataLoader(picdataset, batch_size=8, shuffle=False)
     dnn_act = model_operation.dnn_activation(picdataloader, args.net, args.layer, args.channel)
-	
+
     # Save activation data
     iofiles.save_activation(dnn_act,args.outdir)
 
